@@ -1,35 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>  <!-- ドキュメントの型宣言 -->
+<html lang="en">  <!-- HTML文書の言語を英語に設定 -->
 <head>
-     {% load static %}
+     {% load static %}  <!-- Djangoの静的ファイルを読み込むためのテンプレートタグ -->
+    <!-- BootstrapのCSSを読み込む（UIスタイル） -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQueryライブラリを読み込む -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper.js（Bootstrap用の補助ライブラリ）を読み込む -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- BootstrapのJavaScriptを読み込む -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- 文字エンコードをUTF-8に設定 -->
     <meta charset="UTF-8">
 </head>
 
 <body>
-    <!-- Navigation bar -->
+    <!-- ナビゲーションバー -->
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
             <div class="navbar-header">
+                  <!-- トップページへのリンク（ホーム） -->
                   <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated %}  <!-- ユーザーが認証されている場合 -->
                 <li>
+                    <!-- ユーザー名とユーザーIDを表示 -->
                     <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                    <!-- ログアウトボタン -->
                     <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
                 </li>
-                {% else %}
+                {% else %}  <!-- ユーザーが認証されていない場合 -->
                 <li>
+                    <!-- ログインフォーム -->
                     <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
-                        {% csrf_token %}
+                        {% csrf_token %}  <!-- CSRFトークン（セキュリティ対策） -->
                         <div class="input-group">
+                            <!-- ユーザー名入力欄 -->
                             <input type="text" class="form-control" placeholder="Username" name="username" >
+                            <!-- パスワード入力欄 -->
                             <input type="password" class="form-control" placeholder="Username" name="psw" >
+                            <!-- ログインボタン -->
                             <button class="btn btn-primary" type="submit">Login</button>
+                            <!-- サインアップへのリンク -->
                             <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
                         </div>
                     </form>
@@ -39,18 +52,49 @@
         </div>
     </nav>
 
-    <!-- Page content -->
+    <!-- ページの内容 -->
     <div class="container-fluid">
-            <h2>{{ course.name }}</h2>
-            <div class="card-columns-vertical">
-                {% for lesson in course.lesson_set.all %}
+        <!-- コース名を表示 -->
+        <h2>{{ course.name }}</h2>
+        <div class="card-columns-vertical">
+            {% for lesson in course.lesson_set.all %}  <!-- コースに関連するすべてのレッスンを表示 -->
+                <div class="card mt-1">
+                    <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
+                    <div class="card-body">{{lesson.content}}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- コース詳細テンプレートの変更はここに追加 -->
+        {% if user.is_authenticated %}  <!-- ユーザーが認証されている場合 -->
+            </br>  <!-- 改行 -->
+           <!-- 試験開始ボタン -->
+           <button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#exam">Start Exam</button>
+           <div id="exam" class="collapse">  <!-- 試験を隠し表示 -->
+                <!-- 質問フォーム -->
+                <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="POST">
+                    {% for question in course.question_set.all %}  <!-- コースの質問を繰り返し表示 -->
                     <div class="card mt-1">
-                        <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
-                        <div class="card-body">{{lesson.content}}</div>
+                        <div class="card-header">
+                            <h5>{{ question.content }}</h5>  <!-- 質問内容を表示 -->
+                        </div>
+                        {% csrf_token %}  <!-- CSRFトークン（セキュリティ対策） -->
+                        <div class="form-group">  <!-- 質問の選択肢を表示 -->
+                            {% for choice in question.choice_set.all %}  <!-- 質問に関連する選択肢を繰り返し表示 -->
+                            <div class="form-check">  <!-- 選択肢のチェックボックス -->
+                                <label class="form-check-label">  <!-- チェックボックスのラベル -->
+                                    <input type="checkbox" name="choice_{{choice.id}}" class="form-check-input"  <!-- チェックボックス -->
+                                        id="{{choice.id}}" value="{{choice.id}}">{{ choice.content }}  <!-- 選択肢内容を表示 -->
+                                </label>
+                            </div>
+                            {% endfor %}  <!-- 選択肢の繰り返し終了 -->
+                        </div>
                     </div>
-                {% endfor %}
+                    {% endfor %}  <!-- 質問の繰り返し終了 -->
+                    <!-- 提出ボタン -->
+                    <input class="btn btn-success btn-block" type="submit" value="Submit">
+                </form>
             </div>
-            <!-- Course detail template changes go here -->
+        {% endif %}
     </div>
 </body>
 </html>
