@@ -82,7 +82,8 @@
                             {% for choice in question.choice_set.all %}  <!-- 質問に関連する選択肢を繰り返し表示 -->
                             <div class="form-check">  <!-- 選択肢のチェックボックス -->
                                 <label class="form-check-label">  <!-- チェックボックスのラベル -->
-                                    <input type="checkbox" name="choice_{{choice.id}}" class="form-check-input"  <!-- チェックボックス -->
+                                    <!-- チェックボックス -->
+                                    <input type="checkbox" name="choice_{{choice.id}}" class="form-check-input"  
                                         id="{{choice.id}}" value="{{choice.id}}">{{ choice.content }}  <!-- 選択肢内容を表示 -->
                                 </label>
                             </div>

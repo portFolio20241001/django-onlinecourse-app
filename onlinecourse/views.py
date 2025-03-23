@@ -177,7 +177,7 @@ def show_exam_result(request, course_id, submission_id):
         correct_choices = question.choice_set.filter(is_correct=True)
 
         # ユーザーが選択した選択肢を取得
-        selected_choices = choices.filter(question=question)
+        selected_choices = user_choices.filter(question=question)
 
         # ユーザーの選択が正解の選択肢と完全一致する場合、スコアを加算
         if set(correct_choices) == set(selected_choices):
