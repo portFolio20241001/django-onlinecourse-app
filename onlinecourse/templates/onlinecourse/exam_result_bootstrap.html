@@ -1,32 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>  <!-- HTML5の宣言 -->
+<html lang="en">  <!-- 文書の言語を英語に設定 -->
 <head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">  <!-- 文字エンコーディングをUTF-8に設定 -->
+    {% load static %}  <!-- Djangoのstaticファイル（CSSやJS）を読み込むためのテンプレートタグをロード -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">  <!-- BootstrapのCSSをCDNから読み込む -->
 </head>
 <body>
 
- <nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-        <div class="navbar-header">
-              <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
+<!-- ナビゲーションバーの開始 -->
+ <nav class="navbar navbar-light bg-light">  <!-- 明るい背景色のナビゲーションバーを作成 -->
+    <div class="container-fluid">  <!-- レスポンシブデザイン対応のコンテナ -->
+        <div class="navbar-header">  <!-- ナビゲーションバーのロゴやタイトルを配置するエリア -->
+              <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>  <!-- ホームページへのリンク -->
         </div>
-        <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
+        <ul class="nav navbar-nav navbar-right">  <!-- ナビゲーションバーの右側にメニューを配置 -->
+            {% if user.is_authenticated %}  <!-- ユーザーがログインしているか判定 -->
             <li>
-                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
+                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>  <!-- ユーザー名を表示 -->
+                <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>  <!-- ログアウトリンク -->
             </li>
-            {% else %}
+            {% else %}  <!-- ユーザーがログインしていない場合 -->
             <li>
-                <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Username" name="username" >
-                        <input type="password" class="form-control" placeholder="Username" name="psw" >
-                        <button class="btn btn-primary" type="submit">Login</button>
-                        <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
+                <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">  <!-- ログインフォーム -->
+                    {% csrf_token %}  <!-- CSRF対策のトークンを埋め込む -->
+                    <div class="input-group">  <!-- ユーザー名とパスワードの入力欄をグループ化 -->
+                        <input type="text" class="form-control" placeholder="Username" name="username" >  <!-- ユーザー名入力欄 -->
+                        <input type="password" class="form-control" placeholder="Password" name="psw" >  <!-- パスワード入力欄 -->
+                        <button class="btn btn-primary" type="submit">Login</button>  <!-- ログインボタン -->
+                        <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>  <!-- 新規登録リンク -->
                     </div>
                 </form>
             </li>
@@ -34,22 +35,51 @@
         </ul>
     </div>
 </nav>
+<!-- ナビゲーションバーの終了 -->
 
+<!-- メインコンテンツのコンテナ -->
 <div class="container-fluid">
-    {% if grade > 80 %}
-    <div class="alert alert-success">
-       <!--HINT Display passed info -->
+    {% if grade > 80 %}  <!-- 合格判定（スコアが80点以上なら合格） -->
+    <div class="alert alert-success">  <!-- 合格メッセージ（緑色の通知） -->
+       <!-- 合格時のメッセージを表示 -->
+       <b>Congratulations, {{ user.first_name }}!</b> You have passed the exam and completed the course with score {{ grade }}/100  <!-- 合格おめでとうメッセージ -->
     </div>
-        {% else %}
-        <div class="alert alert-danger">
-            <!--HINT Display failed info -->
+    {% else %}  <!-- 不合格の場合（スコア80点以下） -->
+        <div class="alert alert-danger">  <!-- 不合格メッセージ（赤色の通知） -->
+            <!-- 不合格時のメッセージを表示 -->
+            <b>Failed</b> Sorry, {{ user.first_name }}! You have failed the exam with score {{ grade }}/100
         </div>
-        <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
-        {% endif %}
-        <div class="card-columns-vertical mt-1">
-        <h5 class="">Exam results</h5>
-            <!--HINT Display exam results-->
-        </div>
-    </div>
+        <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>  <!-- 再試験のリンク -->
+    {% endif %}
+    
+    <div class="card-columns-vertical mt-1">  <!-- 試験結果を表示するエリア -->
+        <h5 class="">Exam results</h5>  <!-- "Exam results" の見出しを表示 -->
+            <!-- すべての問題をループして表示 -->
+            {% for question in course.question_set.all %}  <!-- コースに関連するすべての問題を取得し、ループで処理 -->
+            <div class="card mt-1">  <!-- 各問題をカードとして表示 -->
+                <div class="card-header"><h5>{{ question.content }}</h5></div>  <!-- 問題の内容を表示するヘッダー -->
+                <div class="form-group">  <!-- 選択肢をグループ化するエリア -->
+                    {% for choice in question.choice_set.all %}  <!-- 各問題に関連するすべての選択肢を取得し、ループで処理 -->
+                    <div class="form-check">  <!-- 各選択肢を表示するためのエリア -->
+                        {% if choice.is_correct and choice in choices %}  <!-- 選択肢が正解で、ユーザーが選択した場合 -->
+                            <div class="text-success">Correct answer: {{ choice.content }}</div>  <!-- 正解の選択肢を緑色で表示 -->
+                        {% else %}  <!-- それ以外の場合 -->
+                            {% if choice.is_correct and not choice in choices %}  <!-- 選択肢が正解だが、ユーザーが選択しなかった場合 -->
+                                <div class="text-warning">Not selected: {{ choice.content }}</div>  <!-- 選択されなかった正解を黄色で表示 -->
+                            {% else %}  <!-- それ以外の場合 -->
+                                {% if not choice.is_correct and choice in choices %}  <!-- 選択肢が不正解で、ユーザーが選択した場合 -->
+                                    <div class="text-danger">Wrong answer: {{ choice.content }}</div>  <!-- 誤った選択肢を赤色で表示 -->
+                                {% else %}  <!-- それ以外の場合（不正解の選択肢で、ユーザーも選択していない） -->
+                                    <div>{{ choice.content }}</div>  <!-- 何も特別なスタイルを適用せずに選択肢を表示 -->
+                                {% endif %}  <!-- 条件分岐終了（不正解かつ未選択の処理） -->
+                            {% endif %}  
+                        {% endif %} 
+                    </div>  
+                    {% endfor %} 
+                </div>  
+            </div>  
+            {% endfor %}  
+    </div>  <!-- 試験結果エリアの終了 -->
+</div>
 </body>
 </html>
