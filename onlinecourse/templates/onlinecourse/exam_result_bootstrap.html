@@ -54,32 +54,69 @@
     
     <div class="card-columns-vertical mt-1">  <!-- 試験結果を表示するエリア -->
         <h5 class="">Exam results</h5>  <!-- "Exam results" の見出しを表示 -->
-            <!-- すべての問題をループして表示 -->
-            {% for question in course.question_set.all %}  <!-- コースに関連するすべての問題を取得し、ループで処理 -->
-            <div class="card mt-1">  <!-- 各問題をカードとして表示 -->
-                <div class="card-header"><h5>{{ question.content }}</h5></div>  <!-- 問題の内容を表示するヘッダー -->
-                <div class="form-group">  <!-- 選択肢をグループ化するエリア -->
-                    {% for choice in question.choice_set.all %}  <!-- 各問題に関連するすべての選択肢を取得し、ループで処理 -->
-                    <div class="form-check">  <!-- 各選択肢を表示するためのエリア -->
-                        {% if choice.is_correct and choice in choices %}  <!-- 選択肢が正解で、ユーザーが選択した場合 -->
-                            <div class="text-success">Correct answer: {{ choice.content }}</div>  <!-- 正解の選択肢を緑色で表示 -->
+        
+        <!-- すべての問題をループして表示 -->
+        {% for question in course.question_set.all %}  <!-- コースに関連するすべての問題を取得し、ループで処理 -->
+        <div class="card mt-1">  <!-- 各問題をカードとして表示 -->
+            <div class="card-header"><h5>{{ question.content }}</h5></div>  <!-- 問題の内容を表示するヘッダー -->
+            <div class="form-group">  <!-- 選択肢をグループ化するエリア -->
+    
+                <!-- 各問題に関連するすべての選択肢を取得し、ループで処理 -->
+                {% for choice in question.choice_set.all %}
+                <div class="form-check">  <!-- 各選択肢を表示するためのエリア -->
+    
+                    {% if choice.is_correct and choice in choices %}  <!-- 選択肢が正解で、ユーザーが選択した場合 -->
+                        <div class="text-success">✔ Correct answer: {{ choice.content }}</div>  <!-- 正解の選択肢を緑色で表示 -->
+                        <!-- 例: ユーザーが "A" を選び、それが正解だった場合 -->
+                        <!-- 問題: What is 2 + 2? -->
+                        <!-- A. 4 (✔ 正解) -->
+                        <!-- B. 3 -->
+                        <!-- C. 5 -->
+    
+                    {% else %}  <!-- それ以外の場合 -->
+                        
+                        {% if choice.is_correct and not choice in choices %}  <!-- 選択肢が正解だが、ユーザーが選択しなかった場合 -->
+                            <div class="text-warning">⚠ Not selected: {{ choice.content }}</div>  <!-- 選択されなかった正解を黄色で表示 -->
+                            <!-- 例: ユーザーが "B" を選んだが、"A" が正解だった場合 -->
+                            <!-- 問題: What is 2 + 2? -->
+                            <!-- A. 4 (⚠ 正解だが選択せず) -->
+                            <!-- B. 3 (✖ 間違い) -->
+                            <!-- C. 5 -->
+    
                         {% else %}  <!-- それ以外の場合 -->
-                            {% if choice.is_correct and not choice in choices %}  <!-- 選択肢が正解だが、ユーザーが選択しなかった場合 -->
-                                <div class="text-warning">Not selected: {{ choice.content }}</div>  <!-- 選択されなかった正解を黄色で表示 -->
-                            {% else %}  <!-- それ以外の場合 -->
-                                {% if not choice.is_correct and choice in choices %}  <!-- 選択肢が不正解で、ユーザーが選択した場合 -->
-                                    <div class="text-danger">Wrong answer: {{ choice.content }}</div>  <!-- 誤った選択肢を赤色で表示 -->
-                                {% else %}  <!-- それ以外の場合（不正解の選択肢で、ユーザーも選択していない） -->
-                                    <div>{{ choice.content }}</div>  <!-- 何も特別なスタイルを適用せずに選択肢を表示 -->
-                                {% endif %}  <!-- 条件分岐終了（不正解かつ未選択の処理） -->
-                            {% endif %}  
-                        {% endif %} 
-                    </div>  
-                    {% endfor %} 
-                </div>  
-            </div>  
-            {% endfor %}  
+    
+                            {% if not choice.is_correct and choice in choices %}  <!-- 選択肢が不正解で、ユーザーが選択した場合 -->
+                                <div class="text-danger">✖ Wrong answer: {{ choice.content }}</div>  <!-- 誤った選択肢を赤色で表示 -->
+                                <!-- 例: ユーザーが "B" を選んだが、それが間違っていた場合 -->
+                                <!-- 問題: What is 2 + 2? -->
+                                <!-- A. 4 -->
+                                <!-- B. 3 (✖ 間違い) -->
+                                <!-- C. 5 -->
+    
+                            {% else %}  <!-- それ以外の場合（不正解の選択肢で、ユーザーも選択していない） -->
+                                <div>{{ choice.content }}</div>  <!-- 何も特別なスタイルを適用せずに選択肢を表示 -->
+                                <!-- 例: ユーザーが "A" を選んだが、"C" も表示する必要がある場合 -->
+                                <!-- 問題: What is 2 + 2? -->
+                                <!-- A. 4 (✔ 正解) -->
+                                <!-- B. 3 -->
+                                <!-- C. 5 (未選択) -->
+    
+                            {% endif %}  <!-- 条件分岐終了（不正解かつ未選択の処理） -->
+    
+                        {% endif %}  <!-- 条件分岐終了（正解だが選択されなかった処理） -->
+    
+                    {% endif %}  <!-- 条件分岐終了（正解の処理） -->
+    
+                </div>  <!-- 選択肢エリアの終了 -->
+                {% endfor %}  <!-- 選択肢ループの終了 -->
+    
+            </div>  <!-- 選択肢グループの終了 -->
+
+        </div>  <!-- 問題ごとのカード終了 -->
+        {% endfor %}  <!-- 問題ループの終了 -->
+        
     </div>  <!-- 試験結果エリアの終了 -->
+    
 </div>
 </body>
 </html>

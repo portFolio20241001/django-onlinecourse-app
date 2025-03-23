@@ -164,7 +164,7 @@ def show_exam_result(request, course_id, submission_id):
     submission = Submission.objects.get(id=submission_id)
 
     # 提出された解答（選択肢）を取得（多対多の関係）
-    choices = submission.choices.all()
+    user_choices = submission.choices.all()
 
     total_score = 0  # 合計スコアを初期化
 
@@ -186,7 +186,7 @@ def show_exam_result(request, course_id, submission_id):
     # コンテキストに情報を格納
     context['course'] = course  # コース情報
     context['grade'] = total_score  # ユーザーの得点
-    context['choices'] = choices  # ユーザーが選択した選択肢
+    context['user_choices'] = user_choices  # ユーザーが選択した選択肢
 
     # 試験結果のページをレンダリングし、コンテキストを渡す
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
