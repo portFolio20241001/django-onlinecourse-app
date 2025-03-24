@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en">  <!-- HTML文書の言語を英語に設定 -->
 <head>
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <meta charset="UTF-8">
-    <title>Online Courses</title>
+    {% load static %}  <!-- Djangoのstaticファイルを利用するためのロード -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">  <!-- BootstrapのCSSを読み込み -->
+    <meta charset="UTF-8">  <!-- 文字エンコーディングをUTF-8に設定 -->
+    <title>Online Courses</title>  <!-- ページのタイトルを設定 -->
 </head>
 <body>
-    <!-- Navigation bar -->
+    <!-- ナビゲーションバーの開始 -->
     <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                  <a class="navbar-brand" href="#">Online Course</a>
+        <div class="container-fluid">  <!-- ナビゲーションバーのコンテナ -->
+            <div class="navbar-header">  <!-- ナビゲーションのヘッダー部分 -->
+                  <a class="navbar-brand" href="#">Online Course</a>  <!-- ロゴまたはサイト名を表示 -->
             </div>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right">  <!-- ナビゲーションメニューを右側に配置 -->
+                {% if user.is_authenticated %}  <!-- ユーザーがログイン済みか確認 -->
                 <li>
-                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>  <!-- ログイン中のユーザー情報を表示 -->
+                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>  <!-- ログアウトボタン -->
                 </li>
-                {% else %}
+                {% else %}  <!-- ユーザーが未ログインの場合 -->
                 <li>
-                    <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" >
-                            <input type="password" class="form-control" placeholder="Username" name="psw" >
-                            <button class="btn btn-primary" type="submit">Login</button>
-                            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
+                    <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">  <!-- ログインフォーム -->
+                        {% csrf_token %}  <!-- CSRFトークンの埋め込み (セキュリティ対策) -->
+                        <div class="input-group">  <!-- 入力フォームのグループ -->
+                            <input type="text" class="form-control" placeholder="Username" name="username" >  <!-- ユーザー名入力 -->
+                            <input type="password" class="form-control" placeholder="Password" name="psw" >  <!-- パスワード入力 -->
+                            <button class="btn btn-primary" type="submit">Login</button>  <!-- ログインボタン -->
+                            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>  <!-- サインアップページへのリンク -->
                         </div>
                     </form>
                 </li>
@@ -35,31 +35,33 @@
             </ul>
         </div>
     </nav>
+    <!-- ナビゲーションバーの終了 -->
 
-    <!-- Page content -->
-    {% if course_list %}
-        <div class="container">
-            <div class="card-deck">
-                {% for course in course_list %}
-                         <div class="card" style="width: 36rem;">
+    <!-- メインコンテンツの開始 -->
+    {% if course_list %}  <!-- コース一覧が存在する場合 -->
+        <div class="container">  <!-- コンテンツ全体を囲むコンテナ -->
+            <div class="card-deck">  <!-- カードを並べるためのデッキ (Bootstrap) -->
+                {% for course in course_list %}  <!-- course_list の各コースをループ処理 -->
+                         <div class="card" style="width: 36rem;">  <!-- コースごとのカード (横幅36rem) -->
                           <img class="card-img-left" src="{{MEDIA_URL}}/{{ course.image }}" width="240px" height="240px"
-                               alt="Course image">
-                          <div class="card-body bg-light">
+                               alt="Course image">  <!-- コースの画像を表示 -->
+                          <div class="card-body bg-light">  <!-- カードの本文部分 (背景を薄灰色) -->
                               <h5 class="card-title">{{ course.name }}, <span class="text-success">
-                                  {{ course.total_enrollment}} enrolled</span></h5>
-                            <p class="card-text">{{ course.description}}</p>
-                            <form action="{% url 'onlinecourse:enroll' course.id %}" method="post">
-                                  {% csrf_token %}
+                                  {{ course.total_enrollment}} enrolled</span></h5>  <!-- コース名と登録者数を表示 -->
+                            <p class="card-text">{{ course.description}}</p>  <!-- コースの説明文を表示 -->
+                            <form action="{% url 'onlinecourse:enroll' course.id %}" method="post">  <!-- コースへの登録フォーム -->
+                                  {% csrf_token %}  <!-- CSRFトークンの埋め込み (セキュリティ対策) -->
                                   <input class="btn btn-primary"  type="submit"
-                                         value="{% if course.is_enrolled %}Enter{% else %}Enroll{% endif %} ">
+                                         value="{% if course.is_enrolled %}Enter{% else %}Enroll{% endif %} ">  <!-- すでに登録済みなら "Enter"、未登録なら "Enroll" を表示 -->
                             </form>
                           </div>
                         </div>
                 {% endfor %}
             </div>
         </div>
-    {% else %}
-        <p>No courses are available.</p>
+    {% else %}  <!-- コース一覧が存在しない場合 -->
+        <p>No courses are available.</p>  <!-- コースが存在しないことを表示 -->
     {% endif %}
+    <!-- メインコンテンツの終了 -->
 </body>
 </html>
