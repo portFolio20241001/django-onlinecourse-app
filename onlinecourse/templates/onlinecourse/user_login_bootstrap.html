@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> <!-- HTMLの言語を英語に設定 -->
 <head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8"> <!-- 文字エンコーディングをUTF-8に設定 -->
+    {% load static %} <!-- Djangoのstaticファイルを利用するためのロード -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- BootstrapのCSSを読み込み -->
 </head>
 <body>
 
-<!-- Navigation bar -->
+<!-- ナビゲーションバーの開始 -->
     <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
+        <div class="container-fluid"> <!-- フル幅のコンテナを設定 -->
+            <div class="navbar-header"> <!-- ナビゲーションバーのヘッダー部分 -->
+                <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a> <!-- ホームページへのリンク -->
             </div>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right"> <!-- ナビゲーションメニューを右寄せで配置 -->
+                {% if user.is_authenticated %} <!-- ユーザーがログイン済みかを判定 -->
                 <li>
-                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a> <!-- ログイン中のユーザー情報を表示 -->
+                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a> <!-- ログアウトボタン -->
                 </li>
-                {% else %}
+                {% else %} <!-- ユーザーが未ログインの場合の処理 -->
                 <li>
-                    <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" >
-                            <input type="password" class="form-control" placeholder="Password" name="psw" >
-                            <button class="btn btn-primary" type="submit">Login</button>
-                            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
+                    <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post"> <!-- ログインフォーム -->
+                        {% csrf_token %} <!-- CSRFトークンの埋め込み（セキュリティ対策） -->
+                        <div class="input-group"> <!-- 入力フィールドをグループ化 -->
+                            <input type="text" class="form-control" placeholder="Username" name="username" > <!-- ユーザー名入力 -->
+                            <input type="password" class="form-control" placeholder="Password" name="psw" > <!-- パスワード入力 -->
+                            <button class="btn btn-primary" type="submit">Login</button> <!-- ログインボタン -->
+                            <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a> <!-- 新規登録ページへのリンク -->
                         </div>
                     </form>
                 </li>
@@ -35,25 +35,28 @@
             </ul>
         </div>
     </nav>
+    <!-- ナビゲーションバーの終了 -->
 
-    <!-- Stylize Login form -->
-    <form action="{% url 'onlinecourse:login' %}" method="post">
-        {% csrf_token %}
-        <div class="container"> <!--Style root div with .container class -->
-            <h1>Login</h1>
-            <div class="form-group"> <!--Style second div with .form-group class -->
-              <label for="username"><b>User Name</b></label>
-              <input id="username" class = "form-control" type="text" placeholder="Enter User Name: " name="username" required> <!--Style input with .form-control class -->
-              <label for="psw"><b>Password</b></label>
-              <input id="psw" class = "form-control" type="password"  placeholder="Enter Password: " name="psw" required> <!--Style input with .form-control class -->
+    <!-- ログインフォームの開始 -->
+    <form action="{% url 'onlinecourse:login' %}" method="post"> <!-- フォームの送信先をDjangoのログイン処理に指定 -->
+        {% csrf_token %} <!-- CSRFトークンの埋め込み（セキュリティ対策） -->
+        <div class="container"> <!-- コンテナクラスで全体を整列 -->
+            <h1>Login</h1> <!-- 見出しを表示 -->
+            <div class="form-group"> <!-- 入力フォームのグループ化 -->
+              <label for="username"><b>User Name</b></label> <!-- ユーザー名のラベル -->
+              <input id="username" class="form-control" type="text" placeholder="Enter User Name: " name="username" required> <!-- ユーザー名入力欄 -->
+              <label for="psw"><b>Password</b></label> <!-- パスワードのラベル -->
+              <input id="psw" class="form-control" type="password"  placeholder="Enter Password: " name="psw" required> <!-- パスワード入力欄 -->
             </div>
-            {% if message %}
-              <div class="alert alert-warning"> <!--Style the message paragraph with .alert and .alert-warning class -->
-                {{ message }}
+            {% if message %} <!-- メッセージが存在する場合の処理 -->
+              <div class="alert alert-warning"> <!-- 警告メッセージのスタイル設定 -->
+                {{ message }} <!-- Djangoの変数を使ってメッセージを表示 -->
               </div>
             {% endif %}
-            <button class="btn btn-primary" type="submit">Login</button> <!--Style button with .btn and .btn-primary class -->
+            <button class="btn btn-primary" type="submit">Login</button> <!-- ログインボタン -->
         </div>
     </form>
+    <!-- ログインフォームの終了 -->
 
 </body>
+</html>
