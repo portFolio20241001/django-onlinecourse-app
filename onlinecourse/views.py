@@ -62,6 +62,10 @@ def registration_request(request):
         except:
             logger.error("New user")
         if not user_exist:
+
+            print("username: ",username,"password: ",password,"first_name: ",first_name,"last_name: ",last_name,
+            "user_exist: ",user_exist)
+
             # 新しいユーザーを作成
             user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, password=password)
             login(request, user)
@@ -124,6 +128,9 @@ class CourseListView(generic.ListView):
         # 登録者数でコースをソートして上位10件を表示
         courses = Course.objects.order_by('-total_enrollment')[:10]
         for course in courses:
+
+            print("user: ",user,"course: ",course)
+
             if user.is_authenticated:
                 # ユーザーが認証されていれば、コースへの登録状態を確認
                 course.is_enrolled = check_if_enrolled(user, course)
