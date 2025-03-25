@@ -74,6 +74,9 @@ def registration_request(request):
         else:
             # ユーザーが既に存在する場合、エラーメッセージを表示
             context['message'] = "User already exists."
+
+            print("context: ",context)
+
             return render(request, 'onlinecourse/user_registration_bootstrap.html', context)
 
 
