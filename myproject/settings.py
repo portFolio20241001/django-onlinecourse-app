@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # セッション管理
     'django.contrib.messages',  # メッセージフレームワーク
     'django.contrib.staticfiles',  # 静的ファイル管理
+    'django_extensions',  # ER図作成に必要（石川追加）
 ]
 
 # ミドルウェア設定
